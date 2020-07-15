@@ -4,9 +4,9 @@ import { render } from 'react-dom';
 class App extends React.Component {
   state = {
     status: 'off',
-    time: 1200,
+    time: 0,
     timer: null,
-  }
+  };
 
   formatTime = input => {
 
@@ -14,11 +14,63 @@ class App extends React.Component {
     const seconds = input%60;
 
     return `${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
-  }
+  };
+
+  step = () => {
+    const { status, time } = this.state;
+
+    this.setState({
+      time: time - 1
+    })
+
+    if (time == 0) {
+      switch (status) {
+        case 'work' :
+          this.setState({
+            status: 'rest',
+            time: 20,
+          })
+          this.playBell();
+          break;
+        case 'rest' :
+          this.setState({
+            status: 'work',
+            time: 1200,
+          })
+          this.playBell();
+          break;
+        default :
+        console.log('Error');
+      }
+    }
+  };
+
+  startTimer = () => {
+    this.setState ({
+      status: 'work',
+      time: 1200,
+      timer: setInterval(this.step, 1000),
+    });
+  };
+
+  stopTimer = () => {
+    clearInterval(this.state.timer)
+    this.setState({status: 'off', time: 0})
+  };
+
+  closeApp = () => {
+    window.close();
+  };
+
+  playBell = () => {
+    const bell = new Audio('./sounds/bell.wav');
+    bell.play();
+  };
 
   render() {
     const { status, time } = this.state;
     const formatTime = this.formatTime(time);
+
     return (
       <div>
         <h1>Protect your eyes</h1>
@@ -37,21 +89,21 @@ class App extends React.Component {
           <img src="./images/rest.png" />
         }
 
-        {(status == 'off') &&
+        {(status !== 'off') &&
           <div className="timer">
             {formatTime}
           </div>
         }
 
         {(status === 'off') &&
-          <button className="btn">Start</button>
+          <button className="btn" onClick={this.startTimer}>Start</button>
         }
 
         {(status !== 'off') &&
-          <button className="btn">Stop</button>
+          <button className="btn" onClick={this.stopTimer}>Stop</button>
         }
 
-        <button className="btn btn-close">X</button>
+        <button className="btn btn-close" onClick={this.closeApp}>X</button>
       </div>
     )
   }

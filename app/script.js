@@ -58,14 +58,9 @@ class App extends React.Component {
     this.setState({status: 'off', time: 0})
   };
 
-  closeApp = () => {
-    window.close();
-  };
+  closeApp = () => window.close();
 
-  playBell = () => {
-    const bell = new Audio('./sounds/bell.wav');
-    bell.play();
-  };
+  playBell = () => new Audio('./sounds/bell.wav').play();
 
   render() {
     const { status, time } = this.state;
@@ -81,27 +76,19 @@ class App extends React.Component {
           </div>
         }
 
-        {(status === 'work') &&
-          <img src="./images/work.png" />
+        {(status !== 'off') && (
+          <React.Fragment>
+            <img src={`./images/${status === 'work' ? 'work' : 'rest'}.png`} />
+            <div className="timer">
+              {formatTime}
+            </div>
+          </React.Fragment>
+        )
         }
 
-        {(status === 'rest') &&
-          <img src="./images/rest.png" />
-        }
-
-        {(status !== 'off') &&
-          <div className="timer">
-            {formatTime}
-          </div>
-        }
-
-        {(status === 'off') &&
-          <button className="btn" onClick={this.startTimer}>Start</button>
-        }
-
-        {(status !== 'off') &&
-          <button className="btn" onClick={this.stopTimer}>Stop</button>
-        }
+        <button className="btn" onClick={status === 'off' ? this.startTimer : this.stopTimer}>
+          {status === 'off' ? 'start' : 'stop'}
+        </button>
 
         <button className="btn btn-close" onClick={this.closeApp}>X</button>
       </div>

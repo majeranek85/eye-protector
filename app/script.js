@@ -4,12 +4,21 @@ import { render } from 'react-dom';
 class App extends React.Component {
   state = {
     status: 'off',
-    time: null,
+    time: 1200,
     timer: null,
   }
 
+  formatTime = input => {
+
+    const minutes = Math.floor(input/60);
+    const seconds = input%60;
+
+    return `${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`;
+  }
+
   render() {
-    const { status } = this.state;
+    const { status, time } = this.state;
+    const formatTime = this.formatTime(time);
     return (
       <div>
         <h1>Protect your eyes</h1>
@@ -28,9 +37,9 @@ class App extends React.Component {
           <img src="./images/rest.png" />
         }
 
-        {(status !== 'off') &&
+        {(status == 'off') &&
           <div className="timer">
-            18:23
+            {formatTime}
           </div>
         }
 
